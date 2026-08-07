@@ -1,0 +1,17 @@
+{
+  "expires": "2026-08-08T11:28:02.675924",
+  "data": {
+    "domain": "copperfieldledger.org",
+    "last-seen": 1783724600,
+    "abused": false,
+    "whois": {
+      "created": 1783720949,
+      "expires": 1815256949,
+      "registrar": "NameCheap, Inc."
+    },
+    "clusters": {
+      "infra": "f28c1501c58c77128ef71072a1e232ac58a16a7d"
+    },
+    "score": -2
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "expires": "2026-08-08T11:27:52.076962",
+  "data": {
+    "domain": "boundloop.org",
+    "last-seen": 1785683948,
+    "abused": false,
+    "whois": {
+      "created": 1783679749,
+      "expires": 1815215749,
+      "registrar": "NameCheap, Inc."
+    },
+    "clusters": {
+      "auth": "491f8b4f8d38ac9122d14ce0903b2b2b86023ee3",
+      "infra": "c91900639de1d9c34d43036e4ad2a8e98da997fc"
+    },
+    "score": -1.3
+  }
+}

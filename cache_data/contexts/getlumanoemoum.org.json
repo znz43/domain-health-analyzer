@@ -1,0 +1,21 @@
+{
+  "expires": "2026-08-08T11:27:07.144385",
+  "data": [
+    {
+      "context": "mailsample",
+      "last-seen": 1785993240
+    },
+    {
+      "context": "envelope-sender",
+      "last-seen": 1785932960
+    },
+    {
+      "context": "tlscert",
+      "last-seen": 1783765422
+    },
+    {
+      "context": "zrd",
+      "last-seen": 1783762166
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "expires": "2026-08-08T11:20:48.869852",
+  "data": [
+    {
+      "ns": "dns1.registrar-servers.com",
+      "last-seen": 1785851731,
+      "score": -0.2,
+      "counter": 5907060
+    },
+    {
+      "ns": "dns2.registrar-servers.com",
+      "last-seen": 1785851731,
+      "score": -0.5,
+      "counter": 5951701
+    }
+  ]
+}

@@ -1,0 +1,128 @@
+{
+    "domain": "canismajoris.store",
+    "score": -3.0,
+    "timeline": {
+        "is_listed": false,
+        "listed_date": "2026-08-04T13:55:31",
+        "listed_until": null,
+        "last_seen": "2026-08-04T13:55:31"
+    },
+    "dimensions": {
+        "smtp": {
+            "score": -1,
+            "data": {
+                "contexts": [
+                    {
+                        "context": "helo",
+                        "description": "The domain has been seen in a SMTP HELO/EHLO command",
+                        "last_seen": "2026-08-04T13:55:31"
+                    },
+                    {
+                        "context": "rdns",
+                        "description": "The domain has been seen in reverse DNS",
+                        "last_seen": "2026-08-04T13:55:31"
+                    }
+                ],
+                "senders": [
+                    {
+                        "ip": "46.225.55.93",
+                        "helo": "mail.canismajoris.store",
+                        "last_seen": "2026-08-04T13:55:31",
+                        "score": -3
+                    },
+                    {
+                        "ip": "2a01:4f8:1c19:7135::1",
+                        "helo": "mail.canismajoris.store",
+                        "last_seen": "2026-07-28T19:06:48",
+                        "score": 0
+                    }
+                ]
+            }
+        },
+        "identity": {
+            "score": null,
+            "data": {
+                "contexts": [
+                    {
+                        "context": "tlscert",
+                        "description": "The domain has been seen in the TLS certificate",
+                        "last_seen": "2026-08-02T12:33:04"
+                    }
+                ],
+                "spf": [
+                    "v=spf1 mx a ip4:46.225.55.93 ~all"
+                ],
+                "dmarc": [
+                    "v=DMARC1; p=none;"
+                ],
+                "dkim": [
+                    {
+                        "selector": "dkim",
+                        "value": "v=DKIM1;k=rsa;t=s;s=email;p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwW7kiXaIiQ7j0Yvej8PsSQSjvA0Wvui2ptyf3rlKYYuQqrVKEN79n7RKJd6/06IW+NU7oWCn7QVGxfqSFUKNQhOKBmjl0eA/9i5Q+I1b75R3zk03ZtFK0KSBSPxr1YQ9tFqTYO0nIxYtdDSp3qVrRsw89e14ETMuC3GQh8244t9nRAlo8y5plTv 48k7vnsaFLvgOWlsLIWqJTDGItOHJEjXkB/2EYyi2VRTIQxD9viH9W01TNFA8paqV4W0lm1syvdcDV1txKD3Ao2yW5plFmQTDw5B1ThMk6XtEc9mQocgEao/yonlb/hgxqxfiL7rI/Ji+v9/Db/9bkfCO786ASQIDAQAB"
+                    }
+                ]
+            }
+        },
+        "infrastructure": {
+            "score": -2,
+            "data": {
+                "nameservers": [
+                    {
+                        "ns": "dns1.registrar-servers.com",
+                        "last_seen": "2026-08-04T13:55:31",
+                        "score": -0.2,
+                        "counter": 5907060
+                    },
+                    {
+                        "ns": "dns2.registrar-servers.com",
+                        "last_seen": "2026-08-04T13:55:31",
+                        "score": -0.5,
+                        "counter": 5951701
+                    }
+                ],
+                "a_records": [],
+                "aaaa_records": [],
+                "mx_records": [
+                    {
+                        "host": "mail.canismajoris.store"
+                    }
+                ],
+                "spamhaus_dqs": []
+            }
+        },
+        "malware": {
+            "score": null,
+            "data": []
+        },
+        "human": {
+            "score": null
+        }
+    },
+    "contexts": [
+        {
+            "context": "helo",
+            "description": "The domain has been seen in a SMTP HELO/EHLO command",
+            "last_seen": "2026-08-04T13:55:31"
+        },
+        {
+            "context": "rdns",
+            "description": "The domain has been seen in reverse DNS",
+            "last_seen": "2026-08-04T13:55:31"
+        },
+        {
+            "context": "tlscert",
+            "description": "The domain has been seen in the TLS certificate",
+            "last_seen": "2026-08-02T12:33:04"
+        },
+        {
+            "context": "zrd",
+            "description": "The domain has been seen through Zero Reputation Domain (ZRD)",
+            "last_seen": "2026-07-25T13:21:10"
+        }
+    ],
+    "tags": [],
+    "clusters": {
+        "auth": "f0dd2cebb2653a567297e0f428fae58de1e32804",
+        "infra": "f852383ef559a499c28519cceb4c46ae0d61b96e"
+    }
+}

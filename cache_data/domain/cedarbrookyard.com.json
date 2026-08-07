@@ -1,0 +1,18 @@
+{
+  "expires": "2026-08-08T11:27:29.730640",
+  "data": {
+    "domain": "cedarbrookyard.com",
+    "last-seen": 1785703048,
+    "abused": false,
+    "whois": {
+      "created": 1783702594,
+      "expires": 1815238594,
+      "registrar": "PDR Ltd. d/b/a PublicDomainRegistry.com"
+    },
+    "clusters": {
+      "auth": "491f8b4f8d38ac9122d14ce0903b2b2b86023ee3",
+      "infra": "4122749334e99bd1a534a21c8ea9870246785009"
+    },
+    "score": -2.3
+  }
+}

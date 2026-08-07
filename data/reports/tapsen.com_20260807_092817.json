@@ -1,0 +1,110 @@
+{
+    "domain": "tapsen.com",
+    "score": 0.0,
+    "timeline": {
+        "is_listed": false,
+        "listed_date": "2026-07-09T17:13:49",
+        "listed_until": null,
+        "last_seen": "2026-07-09T17:13:49"
+    },
+    "dimensions": {
+        "smtp": {
+            "score": null,
+            "data": {
+                "contexts": [
+                    {
+                        "context": "mailsample",
+                        "description": "The domain has been spotted in a mail sample",
+                        "last_seen": "2025-11-07T21:59:02"
+                    },
+                    {
+                        "context": "helo",
+                        "description": "The domain has been seen in a SMTP HELO/EHLO command",
+                        "last_seen": "2024-06-02T19:36:59"
+                    }
+                ],
+                "senders": []
+            }
+        },
+        "identity": {
+            "score": null,
+            "data": {
+                "contexts": [
+                    {
+                        "context": "tlscert",
+                        "description": "The domain has been seen in the TLS certificate",
+                        "last_seen": "2026-03-07T06:52:58"
+                    }
+                ],
+                "spf": [
+                    "v=spf1 +a +mx -all"
+                ],
+                "dmarc": [],
+                "dkim": []
+            }
+        },
+        "infrastructure": {
+            "score": null,
+            "data": {
+                "nameservers": [
+                    {
+                        "ns": "ns1.dyna-ns.net",
+                        "last_seen": "2026-07-09T17:13:49",
+                        "score": 0.9,
+                        "counter": 2463445
+                    },
+                    {
+                        "ns": "ns2.dyna-ns.net",
+                        "last_seen": "2026-07-09T17:13:49",
+                        "score": -1,
+                        "counter": 2460368
+                    }
+                ],
+                "a_records": [],
+                "aaaa_records": [],
+                "mx_records": [
+                    {
+                        "host": "dcb4.patternemail.com"
+                    },
+                    {
+                        "host": "dca4.patternemail.com"
+                    }
+                ],
+                "spamhaus_dqs": []
+            }
+        },
+        "malware": {
+            "score": null,
+            "data": []
+        },
+        "human": {
+            "score": null
+        }
+    },
+    "contexts": [
+        {
+            "context": "tlscert",
+            "description": "The domain has been seen in the TLS certificate",
+            "last_seen": "2026-03-07T06:52:58"
+        },
+        {
+            "context": "mailbody",
+            "description": "The domain has been used in a link in the content of an email",
+            "last_seen": "2025-11-07T21:59:02"
+        },
+        {
+            "context": "mailsample",
+            "description": "The domain has been spotted in a mail sample",
+            "last_seen": "2025-11-07T21:59:02"
+        },
+        {
+            "context": "helo",
+            "description": "The domain has been seen in a SMTP HELO/EHLO command",
+            "last_seen": "2024-06-02T19:36:59"
+        }
+    ],
+    "tags": [],
+    "clusters": {
+        "auth": "55169806bbcfa6117d68027bddd069c13f54b958"
+    }
+}

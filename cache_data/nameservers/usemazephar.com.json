@@ -1,0 +1,17 @@
+{
+  "expires": "2026-08-08T11:28:28.195927",
+  "data": [
+    {
+      "ns": "kai.ns.cloudflare.com",
+      "last-seen": 1786004160,
+      "score": 1.1,
+      "counter": 125245
+    },
+    {
+      "ns": "pearl.ns.cloudflare.com",
+      "last-seen": 1786004160,
+      "score": -0.6,
+      "counter": 82883
+    }
+  ]
+}

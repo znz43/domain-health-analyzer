@@ -1,0 +1,18 @@
+{
+  "expires": "2026-08-08T11:17:02.133599",
+  "data": {
+    "domain": "canismajoris.store",
+    "last-seen": 1785851731,
+    "abused": false,
+    "whois": {
+      "created": 1784928101,
+      "expires": 1816464101,
+      "registrar": "NameCheap, Inc."
+    },
+    "clusters": {
+      "auth": "f0dd2cebb2653a567297e0f428fae58de1e32804",
+      "infra": "f852383ef559a499c28519cceb4c46ae0d61b96e"
+    },
+    "score": -3
+  }
+}

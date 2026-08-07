@@ -1,0 +1,21 @@
+{
+  "expires": "2026-08-08T11:27:39.939058",
+  "data": {
+    "domain": "meridianreach.org",
+    "last-seen": 1785933944,
+    "tags": [
+      "spam"
+    ],
+    "abused": false,
+    "whois": {
+      "created": 1783683466,
+      "expires": 1815219466,
+      "registrar": "NameCheap, Inc."
+    },
+    "clusters": {
+      "auth": "2ad5cfd39111df71372101627b54126ee4da10fb",
+      "infra": "437007dec6ad9bd2de68fe1fbfa96669b1861cea"
+    },
+    "score": -16.3
+  }
+}

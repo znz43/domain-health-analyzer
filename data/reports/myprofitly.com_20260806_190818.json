@@ -1,0 +1,230 @@
+{
+    "domain": "myprofitly.com",
+    "score": -15.5,
+    "timeline": {
+        "is_listed": true,
+        "listed_date": "2026-07-18T09:00:56",
+        "listed_until": "2027-04-10T06:21:27",
+        "last_seen": "2026-07-19T06:07:16"
+    },
+    "dimensions": {
+        "smtp": {
+            "score": -4,
+            "data": {
+                "contexts": [
+                    {
+                        "context": "mailsample",
+                        "description": "The domain has been spotted in a mail sample",
+                        "last_seen": "2026-07-19T06:07:16"
+                    },
+                    {
+                        "context": "envelope-sender",
+                        "description": "The domain has been seen in smtp envelope sender",
+                        "last_seen": "2026-07-18T09:00:54"
+                    }
+                ],
+                "senders": [
+                    {
+                        "ip": "52.101.227.133",
+                        "helo": null,
+                        "last_seen": "2026-07-19T06:07:16",
+                        "score": 0
+                    },
+                    {
+                        "ip": "52.101.227.90",
+                        "helo": null,
+                        "last_seen": "2026-07-19T04:38:07",
+                        "score": 0
+                    },
+                    {
+                        "ip": "40.107.51.121",
+                        "helo": null,
+                        "last_seen": "2026-07-18T09:00:54",
+                        "score": 0
+                    },
+                    {
+                        "ip": "40.107.57.114",
+                        "helo": null,
+                        "last_seen": "2026-07-17T11:57:59",
+                        "score": 0
+                    },
+                    {
+                        "ip": "40.107.51.82",
+                        "helo": null,
+                        "last_seen": "2026-07-14T04:43:00",
+                        "score": 0
+                    },
+                    {
+                        "ip": "40.107.51.139",
+                        "helo": null,
+                        "last_seen": "2026-07-10T10:47:53",
+                        "score": 0
+                    },
+                    {
+                        "ip": "52.101.225.95",
+                        "helo": null,
+                        "last_seen": "2026-07-05T15:02:39",
+                        "score": 0
+                    },
+                    {
+                        "ip": "40.107.57.123",
+                        "helo": null,
+                        "last_seen": "2026-06-28T10:24:24",
+                        "score": 0
+                    }
+                ]
+            }
+        },
+        "identity": {
+            "score": null,
+            "data": {
+                "contexts": [
+                    {
+                        "context": "tlscert",
+                        "description": "The domain has been seen in the TLS certificate",
+                        "last_seen": "2026-05-19T14:32:33"
+                    }
+                ],
+                "spf": [
+                    "v=spf1 include:spf.protection.outlook.com -all"
+                ],
+                "dmarc": [
+                    "v=DMARC1; p=reject; rua=mailto:philipgutierrez@myprofitly.com; ruf=mailto:philipgutierrez@myprofitly.com; fo=0; pct=100; rf=afrf; ri=604800; sp=reject; aspf=r; adkim=r"
+                ],
+                "dkim": [
+                    {
+                        "selector": "selector1",
+                        "value": "v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuqfAe6VB6MHg4Yjp+QhSx5cy1LShCMVujyBYUcXyodZ9sSRa0YoI1JXg77YD0ihHrLJ9l0fZAVQlWzT8BN1Zgs3K/XRnTDEsMuEUWJhqB9fGBJoB3CTPZ1TebAtJDnHjQdfrzJJE5P6EReEwse5fFWA8QBeikXreJ3jTkZSo5dzcPBQrOpdzfd95QjC42trUv pJPLdQ4FgTDWShXeuSh9hUUAcVD9SO7KYjNfclwj5HmkNZF1RjjG1imERVGlYcSNlRc/z5bGqkr2c1QfxpdQRAUcDLvVWneoY0xKFzepElQVCGGyvHeWszaCMBTknQJTBzrSNI0X3wrUiRxSEjpxQIDAQAB;"
+                    }
+                ]
+            }
+        },
+        "infrastructure": {
+            "score": -1.5,
+            "data": {
+                "nameservers": [
+                    {
+                        "ns": "ns-cloud-d1.googledomains.com",
+                        "last_seen": "2026-07-19T06:07:16",
+                        "score": 2.1,
+                        "counter": 1566757
+                    },
+                    {
+                        "ns": "ns-cloud-d4.googledomains.com",
+                        "last_seen": "2026-07-19T06:07:16",
+                        "score": 2.1,
+                        "counter": 1562914
+                    },
+                    {
+                        "ns": "ns-cloud-d3.googledomains.com",
+                        "last_seen": "2026-07-19T06:07:16",
+                        "score": 2.1,
+                        "counter": 1563717
+                    },
+                    {
+                        "ns": "ns-cloud-d2.googledomains.com",
+                        "last_seen": "2026-07-19T06:07:16",
+                        "score": 2.6,
+                        "counter": 1561243
+                    },
+                    {
+                        "ns": "sonny.ns.cloudflare.com",
+                        "last_seen": "2026-07-05T15:02:39",
+                        "score": 0,
+                        "counter": 101402
+                    },
+                    {
+                        "ns": "pat.ns.cloudflare.com",
+                        "last_seen": "2026-07-05T15:02:39",
+                        "score": 1.9,
+                        "counter": 126719
+                    },
+                    {
+                        "ns": "ns-cloud-c3.googledomains.com",
+                        "last_seen": "2026-04-20T08:51:20",
+                        "score": 2.7,
+                        "counter": 1566987
+                    },
+                    {
+                        "ns": "ns-cloud-c2.googledomains.com",
+                        "last_seen": "2026-04-20T08:51:20",
+                        "score": 2.7,
+                        "counter": 1568035
+                    },
+                    {
+                        "ns": "ns-cloud-c1.googledomains.com",
+                        "last_seen": "2026-04-20T08:51:20",
+                        "score": 2.4,
+                        "counter": 1573592
+                    },
+                    {
+                        "ns": "ns-cloud-c4.googledomains.com",
+                        "last_seen": "2026-04-20T08:51:20",
+                        "score": 1.9,
+                        "counter": 1564715
+                    }
+                ],
+                "a_records": [
+                    {
+                        "ip": "52.15.49.97"
+                    }
+                ],
+                "aaaa_records": [],
+                "mx_records": [
+                    {
+                        "host": "myprofitly-com.mail.protection.outlook.com"
+                    }
+                ],
+                "spamhaus_dqs": [
+                    {
+                        "ip": "52.15.49.97",
+                        "lists": {
+                            "ZEN": false,
+                            "SBL": false,
+                            "XBL": false,
+                            "PBL": false,
+                            "AUTHBL": false
+                        }
+                    }
+                ]
+            }
+        },
+        "malware": {
+            "score": null,
+            "data": []
+        },
+        "human": {
+            "score": -10
+        }
+    },
+    "contexts": [
+        {
+            "context": "mailsample",
+            "description": "The domain has been spotted in a mail sample",
+            "last_seen": "2026-07-19T06:07:16"
+        },
+        {
+            "context": "envelope-sender",
+            "description": "The domain has been seen in smtp envelope sender",
+            "last_seen": "2026-07-18T09:00:54"
+        },
+        {
+            "context": "tlscert",
+            "description": "The domain has been seen in the TLS certificate",
+            "last_seen": "2026-05-19T14:32:33"
+        },
+        {
+            "context": "dnsblquery",
+            "description": "The domain has been seen in a dnsbl query",
+            "last_seen": "2026-04-20T08:51:20"
+        },
+        {
+            "context": "zrd",
+            "description": "The domain has been seen through Zero Reputation Domain (ZRD)",
+            "last_seen": "2024-12-06T14:58:50"
+        }
+    ],
+    "tags": [],
+    "clusters": {},
+    "whois": {}
+}

@@ -1,0 +1,21 @@
+{
+  "expires": "2026-08-08T11:27:17.332842",
+  "data": {
+    "domain": "garnetgrid.org",
+    "last-seen": 1785987573,
+    "tags": [
+      "spam"
+    ],
+    "abused": false,
+    "whois": {
+      "created": 1783700328,
+      "expires": 1815236328,
+      "registrar": "NameCheap, Inc."
+    },
+    "clusters": {
+      "auth": "491f8b4f8d38ac9122d14ce0903b2b2b86023ee3",
+      "infra": "490364b4ace4c64468596500d129c25703fc265c"
+    },
+    "score": -16.3
+  }
+}

@@ -1,0 +1,274 @@
+{
+    "domain": "artspaceworld.co",
+    "score": -17.0,
+    "timeline": {
+        "is_listed": true,
+        "listed_date": "2026-08-05T11:58:27",
+        "listed_until": "2027-08-07T07:28:48",
+        "last_seen": "2026-08-07T07:28:46"
+    },
+    "dimensions": {
+        "smtp": {
+            "score": -7.5,
+            "data": {
+                "contexts": [
+                    {
+                        "context": "mailsample",
+                        "description": "The domain has been spotted in a mail sample",
+                        "last_seen": "2026-08-07T07:28:46"
+                    },
+                    {
+                        "context": "envelope-sender",
+                        "description": "The domain has been seen in smtp envelope sender",
+                        "last_seen": "2026-08-07T05:59:44"
+                    }
+                ],
+                "senders": [
+                    {
+                        "ip": "209.85.216.42",
+                        "helo": null,
+                        "last_seen": "2026-08-07T07:28:46",
+                        "score": 42
+                    },
+                    {
+                        "ip": "209.85.222.176",
+                        "helo": null,
+                        "last_seen": "2026-08-07T06:06:49",
+                        "score": 42
+                    },
+                    {
+                        "ip": "209.85.222.182",
+                        "helo": null,
+                        "last_seen": "2026-08-07T05:59:44",
+                        "score": 42
+                    },
+                    {
+                        "ip": "209.85.208.46",
+                        "helo": null,
+                        "last_seen": "2026-08-07T05:45:03",
+                        "score": 42
+                    },
+                    {
+                        "ip": "209.85.214.171",
+                        "helo": null,
+                        "last_seen": "2026-08-07T05:40:01",
+                        "score": 42
+                    },
+                    {
+                        "ip": "209.85.128.174",
+                        "helo": null,
+                        "last_seen": "2026-08-07T05:32:56",
+                        "score": 42
+                    },
+                    {
+                        "ip": "209.85.215.181",
+                        "helo": null,
+                        "last_seen": "2026-08-07T05:28:23",
+                        "score": 42
+                    },
+                    {
+                        "ip": "209.85.210.52",
+                        "helo": null,
+                        "last_seen": "2026-08-07T05:09:44",
+                        "score": 42
+                    },
+                    {
+                        "ip": "209.85.218.42",
+                        "helo": null,
+                        "last_seen": "2026-08-07T04:57:00",
+                        "score": 42
+                    },
+                    {
+                        "ip": "209.85.161.50",
+                        "helo": null,
+                        "last_seen": "2026-08-07T04:53:27",
+                        "score": 42
+                    },
+                    {
+                        "ip": "209.85.167.53",
+                        "helo": null,
+                        "last_seen": "2026-08-07T04:45:39",
+                        "score": 0
+                    },
+                    {
+                        "ip": "209.85.208.44",
+                        "helo": null,
+                        "last_seen": "2026-08-07T04:41:55",
+                        "score": 42
+                    },
+                    {
+                        "ip": "209.85.222.51",
+                        "helo": null,
+                        "last_seen": "2026-08-07T04:31:51",
+                        "score": 42
+                    },
+                    {
+                        "ip": "74.125.224.50",
+                        "helo": null,
+                        "last_seen": "2026-08-07T04:16:27",
+                        "score": 42
+                    },
+                    {
+                        "ip": "209.85.214.177",
+                        "helo": null,
+                        "last_seen": "2026-08-07T04:13:45",
+                        "score": 42
+                    },
+                    {
+                        "ip": "209.85.215.182",
+                        "helo": null,
+                        "last_seen": "2026-08-07T04:06:43",
+                        "score": 42
+                    },
+                    {
+                        "ip": "209.85.208.178",
+                        "helo": null,
+                        "last_seen": "2026-08-07T04:05:17",
+                        "score": 42
+                    },
+                    {
+                        "ip": "209.85.218.44",
+                        "helo": null,
+                        "last_seen": "2026-08-07T03:50:42",
+                        "score": 42
+                    },
+                    {
+                        "ip": "209.85.215.170",
+                        "helo": null,
+                        "last_seen": "2026-08-07T03:45:04",
+                        "score": 42
+                    },
+                    {
+                        "ip": "209.85.167.181",
+                        "helo": null,
+                        "last_seen": "2026-08-07T03:37:01",
+                        "score": 42
+                    },
+                    {
+                        "ip": "209.85.210.173",
+                        "helo": null,
+                        "last_seen": "2026-08-07T03:24:29",
+                        "score": 0
+                    },
+                    {
+                        "ip": "209.85.128.172",
+                        "helo": null,
+                        "last_seen": "2026-08-07T03:22:30",
+                        "score": 42
+                    },
+                    {
+                        "ip": "209.85.222.42",
+                        "helo": null,
+                        "last_seen": "2026-08-07T03:15:11",
+                        "score": 42
+                    },
+                    {
+                        "ip": "74.125.224.41",
+                        "helo": null,
+                        "last_seen": "2026-08-07T03:12:34",
+                        "score": 42
+                    },
+                    {
+                        "ip": "209.85.221.181",
+                        "helo": null,
+                        "last_seen": "2026-08-07T02:58:07",
+                        "score": 42
+                    }
+                ]
+            }
+        },
+        "identity": {
+            "score": null,
+            "data": {
+                "contexts": [],
+                "spf": [
+                    "v=spf1 include:_spf.google.com ~all"
+                ],
+                "dmarc": [
+                    "v=DMARC1; p=reject; rua=mailto:matthewcastillo@artspaceworld.co; ruf=mailto:matthewcastillo@artspaceworld.co; fo=0; pct=100; rf=afrf; ri=604800; sp=reject; aspf=r; adkim=r"
+                ],
+                "dkim": [
+                    {
+                        "selector": "google",
+                        "value": "v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArLLU73OI7dvmlJkoZiXUa1oqybt9CH5pSbQUpa2uYorNOTkBhK+xliQhee/CjgDxYhOCsFfTd468yd2cm/Onag2uPkSEjDBW5McyMQ4Km6gv3bWkZvIu9ZS5qOTHxBk00tSJotmKLBu3LyCik4E9Ipg8l86iF1geoVOjAkLX4OYqBAPfJJGK9a+QDOSbEBYg/ TsRrPo/mdq3aqabLbSZeNfYdx3Xc59PlAR3faBly9qVHG1StgGuBpY4DWsKmNvYg6GDo6n/jvOAe1gnLvG60z/IqauEYVj9AgBTWis+AO1AA5glh7BtbtNJgZ+laeqrA1YQzJyEMgiFT4OZ9o85PwIDAQAB"
+                    }
+                ]
+            }
+        },
+        "infrastructure": {
+            "score": 0.5,
+            "data": {
+                "nameservers": [
+                    {
+                        "ns": "ns-cloud-a1.googledomains.com",
+                        "last_seen": "2026-08-07T07:28:46",
+                        "score": 1.8,
+                        "counter": 1595845
+                    },
+                    {
+                        "ns": "ns-cloud-a2.googledomains.com",
+                        "last_seen": "2026-08-07T07:28:46",
+                        "score": 1.9,
+                        "counter": 1592856
+                    },
+                    {
+                        "ns": "ns-cloud-a3.googledomains.com",
+                        "last_seen": "2026-08-07T07:28:46",
+                        "score": 1.9,
+                        "counter": 1566115
+                    },
+                    {
+                        "ns": "ns-cloud-a4.googledomains.com",
+                        "last_seen": "2026-08-07T07:28:46",
+                        "score": 2.1,
+                        "counter": 1564083
+                    }
+                ],
+                "a_records": [],
+                "aaaa_records": [],
+                "mx_records": [
+                    {
+                        "host": "smtp.google.com"
+                    }
+                ],
+                "spamhaus_dqs": []
+            }
+        },
+        "malware": {
+            "score": null,
+            "data": []
+        },
+        "human": {
+            "score": -10
+        }
+    },
+    "contexts": [
+        {
+            "context": "mailsample",
+            "description": "The domain has been spotted in a mail sample",
+            "last_seen": "2026-08-07T07:28:46"
+        },
+        {
+            "context": "envelope-sender",
+            "description": "The domain has been seen in smtp envelope sender",
+            "last_seen": "2026-08-07T05:59:44"
+        },
+        {
+            "context": "zrd",
+            "description": "The domain has been seen through Zero Reputation Domain (ZRD)",
+            "last_seen": "2026-07-29T04:57:36"
+        }
+    ],
+    "tags": [
+        "spam"
+    ],
+    "clusters": {
+        "auth": "ed3e63c07f45afe4fc9c3b073b005c5e8006cc76",
+        "infra": "983432639ffab917358b6186288fd6be5a633f1c"
+    },
+    "whois": {
+        "created": null,
+        "expires": null,
+        "registrar": null
+    }
+}

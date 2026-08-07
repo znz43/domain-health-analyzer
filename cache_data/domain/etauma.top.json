@@ -1,0 +1,18 @@
+{
+  "expires": "2026-08-08T11:17:03.980373",
+  "data": {
+    "domain": "etauma.top",
+    "last-seen": 1785668007,
+    "abused": false,
+    "whois": {
+      "created": 1785665990,
+      "expires": 1817201990,
+      "registrar": "Spaceship, Inc."
+    },
+    "clusters": {
+      "auth": "9ccb93ed85082c348e75e09b84e423ac56b6b4e7",
+      "infra": "812c1d0dd6ec7658eecb0e3f8a3eccdf18d6cead"
+    },
+    "score": -2
+  }
+}

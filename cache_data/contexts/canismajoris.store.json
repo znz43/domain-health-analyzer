@@ -1,0 +1,21 @@
+{
+  "expires": "2026-08-08T11:17:03.500705",
+  "data": [
+    {
+      "context": "helo",
+      "last-seen": 1785851731
+    },
+    {
+      "context": "rdns",
+      "last-seen": 1785851731
+    },
+    {
+      "context": "tlscert",
+      "last-seen": 1785673984
+    },
+    {
+      "context": "zrd",
+      "last-seen": 1784985670
+    }
+  ]
+}
