@@ -27,3 +27,6 @@ git status
 
 -- зберегит всі встановлені модулі в файл
 pip freeze > requirements.txt
+
+-- git add
+git add app/normalizers/timeline.py
