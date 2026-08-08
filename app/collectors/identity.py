@@ -6,11 +6,9 @@ from collectors.dns import (
 
 
 IDENTITY_CONTEXTS = [
-
     "tlscert",
     "dkim",
     "dkim-header"
-
 ]
 
 
@@ -19,12 +17,10 @@ def collect_identity(
     contexts
 ):
 
-
     context_data = []
 
 
-    for item in contexts:
-
+    for item in contexts or []:
 
         if item.get("context") in IDENTITY_CONTEXTS:
 

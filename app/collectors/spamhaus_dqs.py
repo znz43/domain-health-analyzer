@@ -14,41 +14,59 @@ LISTS = {
 }
 
 
-def reverse_ip(ip: str) -> str:
-    return ".".join(reversed(ip.split(".")))
+def reverse_ip(
+    ip: str
+) -> str:
+
+    return ".".join(
+        reversed(
+            ip.split(".")
+        )
+    )
 
 
-def check_dqs(ip: str):
+def empty_result(
+    ip: str
+):
 
-    result = {
+    return {
+
         "ip": ip,
-        "lists": {}
+
+        "lists": {
+            name: None
+            for name in LISTS
+        }
+
     }
 
-    #
-    # DQS only supports IPv4
-    #
+
+def check_dqs(
+    ip: str
+):
+
+    result = empty_result(ip)
+
+
     try:
 
         address = ipaddress.ip_address(ip)
 
         if address.version != 4:
-
-            for name in LISTS:
-                result["lists"][name] = None
-
             return result
+
 
     except ValueError:
 
-        for name in LISTS:
-            result["lists"][name] = None
-
         return result
+
+
 
     reversed_ip = reverse_ip(ip)
 
+
     for name, zone in LISTS.items():
+
 
         query = (
             f"{reversed_ip}."
@@ -56,21 +74,30 @@ def check_dqs(ip: str):
             f"{zone}"
         )
 
+
         try:
 
-            dns.resolver.resolve(query, "A")
+            dns.resolver.resolve(
+                query,
+                "A",
+                lifetime=5
+            )
+
 
             result["lists"][name] = True
 
+
         except (
             dns.resolver.NXDOMAIN,
-            dns.resolver.NoAnswer,
+            dns.resolver.NoAnswer
         ):
 
             result["lists"][name] = False
 
+
         except Exception:
 
             result["lists"][name] = None
+
 
     return result

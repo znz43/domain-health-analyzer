@@ -13,13 +13,12 @@ DEFAULT_DKIM_SELECTORS = [
 ]
 
 
-def resolve_record(domain, record_type):
+def resolve_record(
+    domain: str,
+    record_type: str
+):
 
     try:
-
-        print(
-            f"DNS QUERY {record_type}: {domain}"
-        )
 
         answers = dns.resolver.resolve(
             domain,
@@ -27,32 +26,19 @@ def resolve_record(domain, record_type):
             lifetime=5
         )
 
-        result = []
 
-        for record in answers:
+        return [
+            str(record)
+            .replace('"', "")
+            .strip()
 
-            result.append(
-                str(record)
-                .replace('"', '')
-                .strip()
-            )
-
-        print(
-            "DNS RESULT:",
-            result
-        )
-
-        return result
+            for record in answers
+        ]
 
 
-    except Exception as e:
-
-        print(
-            f"DNS FAILED: {domain} {record_type} {e}"
-        )
+    except Exception:
 
         return []
-
 
 
 def get_a(domain):
@@ -63,14 +49,12 @@ def get_a(domain):
     )
 
 
-
 def get_aaaa(domain):
 
     return resolve_record(
         domain,
         "AAAA"
     )
-
 
 
 def get_mx(domain):
@@ -81,14 +65,12 @@ def get_mx(domain):
     )
 
 
-
 def get_txt(domain):
 
     return resolve_record(
         domain,
         "TXT"
     )
-
 
 
 def get_spf(domain):
@@ -106,7 +88,6 @@ def get_spf(domain):
     ]
 
 
-
 def get_dmarc(domain):
 
     return resolve_record(
@@ -115,16 +96,13 @@ def get_dmarc(domain):
     )
 
 
-
-def get_dkim(domain, selectors=None):
+def get_dkim(
+    domain,
+    selectors=None
+):
 
     if selectors is None:
         selectors = DEFAULT_DKIM_SELECTORS
-
-
-    print(
-        f"DKIM CHECK: {domain}"
-    )
 
 
     results = []
@@ -181,14 +159,7 @@ def get_dkim(domain, selectors=None):
         })
 
 
-    print(
-        "DKIM FOUND:",
-        results
-    )
-
-
     return results
-
 
 
 def resolve_host(host):
@@ -196,10 +167,10 @@ def resolve_host(host):
     result = []
 
 
-    for record_type in [
+    for record_type in (
         "A",
         "AAAA"
-    ]:
+    ):
 
         result.extend(
 

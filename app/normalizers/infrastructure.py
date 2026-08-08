@@ -10,13 +10,9 @@ def normalize_records(
         return []
 
 
-    normalized = []
+    return [
 
-
-    for item in records:
-
-        normalized.append({
-
+        {
             field: item.get(field),
 
             "last_seen": unix_to_iso(
@@ -26,8 +22,8 @@ def normalize_records(
             "score": item.get("score"),
 
             "counter": item.get("counter")
+        }
 
-        })
+        for item in records
 
-
-    return normalized
+    ]

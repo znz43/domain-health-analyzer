@@ -1,42 +1,43 @@
-from pydantic import BaseModel
 from typing import Any
+
+from pydantic import BaseModel, Field
 
 
 class DomainReport(BaseModel):
 
-    #
-    # Domain name
-    #
     domain: str
 
-
-    #
-    # Spamhaus reputation score
-    #
     score: float | None = None
 
 
-    #
-    # Listing timeline
-    #
-    timeline: dict[str, Any]
+    timeline: dict[str, Any] = Field(
+        default_factory=dict
+    )
 
 
-    #
-    # Reputation dimensions
-    #
-    dimensions: dict[str, Any]
+    dimensions: dict[str, Any] = Field(
+        default_factory=dict
+    )
 
 
-    #
-    # Spamhaus contexts
-    #
-    contexts: list[dict[str, Any]]
+    contexts: list[dict[str, Any]] = Field(
+        default_factory=list
+    )
 
 
-    #
-    # Domain metadata
-    #
-    tags: list[str] = []
+    tags: list[str] = Field(
+        default_factory=list
+    )
 
-    clusters: dict[str, Any] = {}
+
+    clusters: dict[str, Any] = Field(
+        default_factory=dict
+    )
+
+
+    abused: bool = False
+
+
+    whois: dict[str, Any] = Field(
+        default_factory=dict
+    )
