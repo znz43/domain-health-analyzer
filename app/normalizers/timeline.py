@@ -11,22 +11,53 @@ def normalize_timeline(
     for item in contexts:
 
         if item.get("context") == "zrd":
-            zrd_date = item.get("last_seen")
 
+            zrd_date = item.get(
+                "last_seen"
+            )
+
+    is_listed = listing.get(
+        "is-listed"
+    )
+
+    ts = listing.get(
+        "ts"
+    )
+
+    listed_until = listing.get(
+        "listed-until"
+    )
+
+    listed_date = None
+    last_seen = None
+
+    if is_listed:
+
+        listed_date = unix_to_iso(
+            ts
+        )
+
+        last_seen = unix_to_iso(
+            ts
+        )
+
+    else:
+
+        last_seen = unix_to_iso(
+            ts
+        )
 
     return {
 
-        "listed": listing.get(
-            "is-listed"
-        ),
+        "is_listed": is_listed,
+
+        "listed_date": listed_date,
 
         "listed_until": unix_to_iso(
-            listing.get("listed-until")
+            listed_until
         ),
 
-        "listed_since": unix_to_iso(
-            listing.get("ts")
-        ),
+        "last_seen": last_seen,
 
         "zrd_detected": zrd_date
 
