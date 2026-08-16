@@ -40,3 +40,6 @@ id_ed25519
 build/
 dist/
 *.egg-info/
+
+# Project cache
+cache_data/

@@ -1,5 +1,7 @@
 import csv
 import os
+import requests
+from datetime import datetime
 
 from api.spamhaus_client import SpamhausClient
 from repositories.spamhaus_repository import SpamhausRepository
@@ -19,10 +21,14 @@ from normalizers.malware import normalize_malware
 
 
 INPUT_FILE = "data/domains.txt"
-OUTPUT_FILE = "data/export/spamhaus_domains.csv"
+OUTPUT_FILE = "data/export/spamhaus_history.csv"
+
+DBL_BASE_URL = "https://apibl.spamhaus.net"
 
 
 FIELDS = [
+
+    "checked_at",
 
     "domain",
     "score",
@@ -52,6 +58,9 @@ FIELDS = [
     "dns_aaaa",
     "nameservers",
     "spamhaus_dqs",
+
+    "dbl_api_code",
+    "dbl_return_code",
 
     "malware",
 
@@ -264,6 +273,144 @@ def format_dict(data):
     return str(data)
 
 
+# ==========================================================
+# DBL
+# ==========================================================
+
+def get_dbl_data(domain):
+
+    api_key = os.getenv(
+        "SPAMHAUS_DQS_KEY"
+    )
+
+    if not api_key:
+
+        print(
+            "DBL: SPAMHAUS_DQS_KEY not found"
+        )
+
+        return {
+            "dbl_api_code": "",
+            "dbl_return_code": ""
+        }
+
+    endpoint = (
+        f"/lookup/v1/DBL/{domain}"
+    )
+
+    url = (
+        DBL_BASE_URL
+        + endpoint
+    )
+
+    print()
+    print(
+        "DBL:"
+    )
+
+    print(
+        "ENDPOINT:",
+        endpoint
+    )
+
+    try:
+
+        response = requests.get(
+            url,
+            headers={
+                "Authorization": api_key,
+                "Accept": "application/json"
+            },
+            timeout=30
+        )
+
+        print(
+            "STATUS:",
+            response.status_code
+        )
+
+        if response.status_code != 200:
+
+            print(
+                "DBL ERROR:",
+                response.text
+            )
+
+            return {
+                "dbl_api_code": "",
+                "dbl_return_code": ""
+            }
+
+        data = response.json()
+
+        resp = data.get(
+            "resp",
+            []
+        )
+
+        # ==============================================
+        # DBL API CODE
+        # ==============================================
+
+        dbl_api_code = ""
+
+        if isinstance(
+            resp,
+            list
+        ) and resp:
+
+            dbl_api_code = resp[0]
+
+        # ==============================================
+        # DBL RETURN CODE
+        # ==============================================
+
+        dbl_return_code = ""
+
+        if dbl_api_code:
+
+            dbl_return_code = (
+                f"127.0.1.{dbl_api_code - 2000}"
+            )
+
+        print(
+            "DBL API CODE:",
+            dbl_api_code
+        )
+
+        print(
+            "DBL RETURN CODE:",
+            dbl_return_code
+        )
+
+        return {
+
+            "dbl_api_code":
+                dbl_api_code,
+
+            "dbl_return_code":
+                dbl_return_code
+
+        }
+
+    except Exception as e:
+
+        print(
+            "DBL ERROR:",
+            e
+        )
+
+        return {
+
+            "dbl_api_code": "",
+
+            "dbl_return_code": ""
+
+        }
+# ==========================================================
+# BUILD REPORT
+# ==========================================================
+
 def build_report(
     repo,
     domain
@@ -277,7 +424,6 @@ def build_report(
 
     )
 
-
     dimensions = normalize_dimensions(
 
         repo.get_dimensions(
@@ -286,9 +432,7 @@ def build_report(
 
     )
 
-
     catalog = repo.get_context_catalog()
-
 
     contexts = normalize_contexts(
 
@@ -300,7 +444,6 @@ def build_report(
 
     )
 
-
     smtp = collect_smtp(
 
         repo,
@@ -311,7 +454,6 @@ def build_report(
 
     )
 
-
     identity = collect_identity(
 
         domain,
@@ -319,7 +461,6 @@ def build_report(
         contexts
 
     )
-
 
     timeline = collect_timeline(
 
@@ -333,7 +474,6 @@ def build_report(
 
     )
 
-
     infrastructure = collect_infrastructure(
 
         repo,
@@ -341,7 +481,6 @@ def build_report(
         domain
 
     )
-
 
     malware = normalize_malware(
 
@@ -354,7 +493,6 @@ def build_report(
         )
 
     )
-
 
     return DomainReport(
 
@@ -433,6 +571,10 @@ def build_report(
     )
 
 
+# ==========================================================
+# FLATTEN REPORT
+# ==========================================================
+
 def flatten_report(report):
 
     smtp = report.dimensions[
@@ -453,7 +595,6 @@ def flatten_report(report):
         "data"
     ]
 
-
     return {
 
         "domain":
@@ -466,7 +607,6 @@ def flatten_report(report):
             join_values(
                 report.tags
             ),
-
 
         "is_listed":
             report.timeline.get(
@@ -488,12 +628,10 @@ def flatten_report(report):
                 "last_seen"
             ),
 
-
         "contexts":
             format_contexts(
                 report.contexts
             ),
-
 
         "smtp_score":
             report.dimensions[
@@ -530,7 +668,6 @@ def flatten_report(report):
                 "score"
             ],
 
-
         "spf":
             join_values(
                 identity.get("spf")
@@ -546,12 +683,10 @@ def flatten_report(report):
                 identity.get("dkim")
             ),
 
-
         "senders":
             format_senders(
                 smtp.get("senders")
             ),
-
 
         "mx":
             format_objects(
@@ -577,7 +712,6 @@ def flatten_report(report):
                 "ip"
             ),
 
-
         "nameservers":
             format_nameservers(
                 infra.get(
@@ -592,7 +726,6 @@ def flatten_report(report):
                 )
             ),
 
-
         "malware":
             format_dict(
                 report.dimensions[
@@ -602,7 +735,6 @@ def flatten_report(report):
                 )
             ),
 
-
         "clusters":
             format_dict(
                 report.clusters
@@ -611,6 +743,10 @@ def flatten_report(report):
     }
 
 
+# ==========================================================
+# MAIN
+# ==========================================================
+
 def main():
 
     os.makedirs(
@@ -618,18 +754,19 @@ def main():
         exist_ok=True
     )
 
-
     client = SpamhausClient()
 
     repo = SpamhausRepository(
         client
     )
 
+    checked_at = datetime.now().isoformat(
+        timespec="seconds"
+    )
 
     rows = []
 
-
-    for domain in load_domains()[:50]:
+    for domain in load_domains():
 
         try:
 
@@ -646,73 +783,85 @@ def main():
                 "=" * 60
             )
 
-
             report = build_report(
-
                 repo,
-
                 domain
-
             )
 
+            row = flatten_report(
+                report
+            )
+
+            # ==================================================
+            # DBL
+            # ==================================================
+
+            dbl = get_dbl_data(
+                domain
+            )
+
+            row["dbl_api_code"] = dbl.get(
+                "dbl_api_code"
+            )
+
+            row["dbl_return_code"] = dbl.get(
+                "dbl_return_code"
+            )
+
+            row["checked_at"] = checked_at
 
             rows.append(
-
-                flatten_report(
-                    report
-                )
-
+                row
             )
-
 
             print(
                 "DONE:",
                 domain
             )
 
-
         except Exception as e:
 
             print(
                 "FAILED:",
                 domain,
+                "->",
                 e
             )
 
+    file_exists = os.path.exists(
+        OUTPUT_FILE
+    )
 
     with open(
-
         OUTPUT_FILE,
-
-        "w",
-
+        "a",
         newline="",
-
         encoding="utf-8"
-
     ) as file:
 
         writer = csv.DictWriter(
-
             file,
-
             fieldnames=FIELDS
-
         )
 
+        if not file_exists:
 
-        writer.writeheader()
+            writer.writeheader()
 
         writer.writerows(
             rows
         )
 
-
     print()
 
     print(
-        "EXPORT:",
+        "HISTORY APPEND:",
         OUTPUT_FILE
+    )
+
+    print(
+        "ROWS ADDED:",
+        len(rows)
     )
 
 

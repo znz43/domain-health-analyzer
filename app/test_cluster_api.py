@@ -258,7 +258,7 @@ def get_cluster(
 
 def main():
 
-    domain = "garnetgrid.org"
+    domain = "charamarinara.com"
 
 
     token = login()
