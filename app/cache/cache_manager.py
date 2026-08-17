@@ -5,6 +5,7 @@ from .file_cache import FileCache
 class CacheManager:
 
     def __init__(self):
+
         self.memory = MemoryCache()
         self.file = FileCache()
 
@@ -17,6 +18,7 @@ class CacheManager:
         namespace,
         key
     ):
+
         return f"{namespace}:{key}"
 
     # ==========================================================
@@ -34,20 +36,12 @@ class CacheManager:
             key
         )
 
-        # ------------------------------------------------------
-        # MEMORY CACHE
-        # ------------------------------------------------------
-
         value = self.memory.get(
             mem_key
         )
 
         if value is not None:
             return value
-
-        # ------------------------------------------------------
-        # FILE CACHE
-        # ------------------------------------------------------
 
         value = self.file.get(
             namespace,
@@ -82,18 +76,10 @@ class CacheManager:
             key
         )
 
-        # ------------------------------------------------------
-        # MEMORY CACHE
-        # ------------------------------------------------------
-
         self.memory.set(
             mem_key,
             value
         )
-
-        # ------------------------------------------------------
-        # FILE CACHE
-        # ------------------------------------------------------
 
         self.file.set(
             namespace,
@@ -117,21 +103,9 @@ class CacheManager:
             key
         )
 
-        print(
-            f"CACHE DELETE: {namespace}/{key}"
-        )
-
-        # ------------------------------------------------------
-        # MEMORY CACHE
-        # ------------------------------------------------------
-
         self.memory.delete(
             mem_key
         )
-
-        # ------------------------------------------------------
-        # FILE CACHE
-        # ------------------------------------------------------
 
         self.file.delete(
             namespace,
@@ -156,25 +130,18 @@ class CacheManager:
         )
 
         if value is not None:
-
-            print(
-                f"CACHE HIT: {namespace}/{key}"
-            )
-
             return value
-
-        print(
-            f"CACHE MISS: {namespace}/{key}"
-        )
 
         value = loader()
 
-        self.set(
-            namespace,
-            key,
-            value,
-            ttl_hours
-        )
+        if value is not None:
+
+            self.set(
+                namespace,
+                key,
+                value,
+                ttl_hours
+            )
 
         return value
 
@@ -186,17 +153,6 @@ class CacheManager:
         self,
         namespace
     ):
-
-        """
-        Clear all cached values from a namespace.
-
-        This method is intentionally optional and does not
-        affect existing cache behaviour.
-        """
-
-        print(
-            f"CACHE CLEAR NAMESPACE: {namespace}"
-        )
 
         if hasattr(
             self.file,

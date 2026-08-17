@@ -6,9 +6,12 @@ from dotenv import load_dotenv
 
 from cache.cache_manager import CacheManager
 
+
 BASE_DIR = Path(__file__).resolve().parents[2]
 
-load_dotenv(BASE_DIR / ".env")
+load_dotenv(
+    BASE_DIR / ".env"
+)
 
 
 class SpamhausClient:
@@ -17,8 +20,13 @@ class SpamhausClient:
 
     def __init__(self):
 
-        self.username = os.getenv("SPAMHAUS_USERNAME")
-        self.password = os.getenv("SPAMHAUS_PASSWORD")
+        self.username = os.getenv(
+            "SPAMHAUS_USERNAME"
+        )
+
+        self.password = os.getenv(
+            "SPAMHAUS_PASSWORD"
+        )
 
         self.token = None
 
@@ -30,14 +38,24 @@ class SpamhausClient:
 
     def login(self):
 
-        cached = self.cache.get("auth", "token")
+        cached = self.cache.get(
+            "auth",
+            "token"
+        )
 
         if cached:
-            print("CACHE HIT: auth/token")
+
+            print(
+                "AUTH CACHE HIT"
+            )
+
             self.token = cached
+
             return self.token
 
-        print("CACHE MISS: auth/token")
+        print(
+            "AUTH CACHE MISS"
+        )
 
         response = requests.post(
             f"{self.BASE_URL}/api/v1/login",
@@ -52,11 +70,16 @@ class SpamhausClient:
             timeout=30
         )
 
-        print("LOGIN STATUS:", response.status_code)
+        print(
+            "LOGIN STATUS:",
+            response.status_code
+        )
 
         response.raise_for_status()
 
-        self.token = response.json()["token"]
+        data = response.json()
+
+        self.token = data["token"]
 
         self.cache.set(
             "auth",
@@ -78,20 +101,48 @@ class SpamhausClient:
         ttl=24
     ):
 
+        namespace = None
+        key = None
+
+        # ------------------------------------------------------
+        # CACHE
+        # ------------------------------------------------------
+
         if cache_key:
 
-            namespace, key = cache_key.split("/", 1)
+            namespace, key = cache_key.split(
+                "/",
+                1
+            )
 
-            cached = self.cache.get(namespace, key)
+            cached = self.cache.get(
+                namespace,
+                key
+            )
 
             if cached is not None:
-                print(f"CACHE HIT: {cache_key}")
+
+                print(
+                    f"CACHE HIT: {cache_key} "
+                    f"| type={type(cached).__name__}"
+                )
+
                 return cached
 
-            print(f"CACHE MISS: {cache_key}")
+            print(
+                f"CACHE MISS: {cache_key}"
+            )
+
+        # ------------------------------------------------------
+        # AUTH
+        # ------------------------------------------------------
 
         if not self.token:
             self.login()
+
+        # ------------------------------------------------------
+        # REQUEST
+        # ------------------------------------------------------
 
         response = requests.get(
             self.BASE_URL + endpoint,
@@ -101,9 +152,18 @@ class SpamhausClient:
             timeout=30
         )
 
+        # ------------------------------------------------------
+        # TOKEN EXPIRED
+        # ------------------------------------------------------
+
         if response.status_code == 401:
 
+            print(
+                "AUTH EXPIRED: refreshing token"
+            )
+
             self.token = None
+
             self.login()
 
             response = requests.get(
@@ -114,16 +174,39 @@ class SpamhausClient:
                 timeout=30
             )
 
+        # ------------------------------------------------------
+        # NOT FOUND
+        # ------------------------------------------------------
+
         if response.status_code == 404:
-            return []
+
+            print(
+                f"NOT FOUND: {endpoint}"
+            )
+
+            # Important:
+            # Do NOT convert 404 into [].
+            # Do NOT cache the result.
+
+            return None
+
+        # ------------------------------------------------------
+        # OTHER HTTP ERRORS
+        # ------------------------------------------------------
 
         response.raise_for_status()
 
+        # ------------------------------------------------------
+        # JSON
+        # ------------------------------------------------------
+
         data = response.json()
 
-        if cache_key:
+        # ------------------------------------------------------
+        # CACHE
+        # ------------------------------------------------------
 
-            namespace, key = cache_key.split("/", 1)
+        if cache_key and data is not None:
 
             self.cache.set(
                 namespace,
@@ -138,35 +221,53 @@ class SpamhausClient:
     # DOMAIN
     # ==========================================================
 
-    def get_domain(self, domain):
+    def get_domain(
+        self,
+        domain
+    ):
+
         return self.get(
             f"/api/intel/v2/byobject/domain/{domain}",
             f"domain/{domain}"
         )
 
-    def get_domain_dimensions(self, domain):
+    def get_domain_dimensions(
+        self,
+        domain
+    ):
+
         return self.get(
             f"/api/intel/v2/byobject/domain/{domain}/dimensions",
             f"dimensions/{domain}"
         )
 
-    def get_domain_contexts(self, domain):
+    def get_domain_contexts(
+        self,
+        domain
+    ):
+
         return self.get(
             f"/api/intel/v2/byobject/domain/{domain}/contexts",
             f"contexts/{domain}"
         )
 
     def get_context_list(self):
+
         return self.get(
             "/api/intel/v2/context",
-            "context_catalog/all"
+            "context_catalog/all",
+            ttl=24 * 30
         )
 
     # ==========================================================
     # LISTING
     # ==========================================================
 
-    def get_domain_listing(self, domain):
+    def get_domain_listing(
+        self,
+        domain
+    ):
+
         return self.get(
             f"/api/intel/v2/byobject/domain/{domain}/listing",
             f"listing/{domain}"
@@ -176,77 +277,139 @@ class SpamhausClient:
     # SENDERS
     # ==========================================================
 
-    def get_domain_senders(self, domain):
+    def get_domain_senders(
+        self,
+        domain
+    ):
+
         return self.get(
             f"/api/intel/v2/byobject/domain/{domain}/senders",
             f"senders/{domain}"
         )
 
-    def get_senders(self, domain):
-        return self.get_domain_senders(domain)
+    def get_senders(
+        self,
+        domain
+    ):
+
+        return self.get_domain_senders(
+            domain
+        )
 
     # ==========================================================
     # SENDER IP HISTORY
     # ==========================================================
 
-    def get_ip_history(self, ip):
+    def get_ip_history(
+        self,
+        ip
+    ):
+
         data = self.get(
             f"/api/intel/v1/byobject/cidr/ALL/listings/history/{ip}",
             f"sender_ip_history/{ip}"
         )
 
         if isinstance(data, dict):
-            return data.get("results", [])
 
-        return data or []
+            return data.get(
+                "results",
+                []
+            )
+
+        if isinstance(data, list):
+
+            return data
+
+        return []
 
     # ==========================================================
     # NAMESERVERS
     # ==========================================================
 
-    def get_domain_ns(self, domain):
+    def get_domain_ns(
+        self,
+        domain
+    ):
+
         return self.get(
             f"/api/intel/v2/byobject/domain/{domain}/ns",
             f"nameservers/{domain}"
         )
 
-    def get_nameservers(self, domain):
-        return self.get_domain_ns(domain)
+    def get_nameservers(
+        self,
+        domain
+    ):
 
-    def get_domain_nameservers(self, domain):
-        return self.get_nameservers(domain)
+        return self.get_domain_ns(
+            domain
+        )
+
+    def get_domain_nameservers(
+        self,
+        domain
+    ):
+
+        return self.get_nameservers(
+            domain
+        )
 
     # ==========================================================
     # TAGS
     # ==========================================================
 
-    def get_domain_tags(self, domain):
+    def get_domain_tags(
+        self,
+        domain
+    ):
+
         return self.get(
             f"/api/intel/v2/byobject/domain/{domain}/tags",
             f"tags/{domain}"
         )
 
-    def get_tags(self, domain):
-        return self.get_domain_tags(domain)
+    def get_tags(
+        self,
+        domain
+    ):
+
+        return self.get_domain_tags(
+            domain
+        )
 
     # ==========================================================
     # MALWARE
     # ==========================================================
 
-    def get_domain_malware(self, domain):
+    def get_domain_malware(
+        self,
+        domain
+    ):
+
         return self.get(
             f"/api/intel/v2/byobject/domain/{domain}/malware",
             f"malware/{domain}"
         )
 
-    def get_malware(self, domain):
-        return self.get_domain_malware(domain)
+    def get_malware(
+        self,
+        domain
+    ):
+
+        return self.get_domain_malware(
+            domain
+        )
 
     # ==========================================================
     # DNS / INFRA
     # ==========================================================
 
-    def get_domain_a_records(self, domain):
+    def get_domain_a_records(
+        self,
+        domain
+    ):
+
         return self.get(
             f"/api/intel/v2/byobject/domain/{domain}/a",
             f"a/{domain}"
@@ -256,13 +419,21 @@ class SpamhausClient:
     # CLUSTERS
     # ==========================================================
 
-    def get_infra_cluster(self, infra_hash):
+    def get_infra_cluster(
+        self,
+        infra_hash
+    ):
+
         return self.get(
             f"/api/intel/v2/byobject/hash/infra/{infra_hash}",
             f"cluster_infra/{infra_hash}"
         )
 
-    def get_auth_cluster(self, auth_hash):
+    def get_auth_cluster(
+        self,
+        auth_hash
+    ):
+
         return self.get(
             f"/api/intel/v2/byobject/hash/auth/{auth_hash}",
             f"cluster_auth/{auth_hash}"

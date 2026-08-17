@@ -1,4 +1,5 @@
 import json
+
 from datetime import datetime, timedelta
 from pathlib import Path
 
@@ -6,43 +7,105 @@ from pathlib import Path
 class FileCache:
 
     def __init__(self, cache_dir="cache_data"):
-        self.base = Path(cache_dir)
-        self.base.mkdir(parents=True, exist_ok=True)
 
-    def _path(self, namespace: str, key: str):
+        self.base = Path(cache_dir)
+
+        self.base.mkdir(
+            parents=True,
+            exist_ok=True
+        )
+
+    # ==========================================================
+    # PATH
+    # ==========================================================
+
+    def _path(
+        self,
+        namespace,
+        key
+    ):
 
         folder = self.base / namespace
-        folder.mkdir(parents=True, exist_ok=True)
 
-        safe = key.replace("/", "_")
+        folder.mkdir(
+            parents=True,
+            exist_ok=True
+        )
+
+        safe = key.replace(
+            "/",
+            "_"
+        )
 
         return folder / f"{safe}.json"
 
-    def get(self, namespace, key):
+    # ==========================================================
+    # GET
+    # ==========================================================
 
-        path = self._path(namespace, key)
+    def get(
+        self,
+        namespace,
+        key
+    ):
+
+        path = self._path(
+            namespace,
+            key
+        )
 
         if not path.exists():
             return None
 
-        with open(path, "r", encoding="utf8") as f:
+        with open(
+            path,
+            "r",
+            encoding="utf8"
+        ) as f:
+
             obj = json.load(f)
 
-        expires = datetime.fromisoformat(obj["expires"])
+        expires = datetime.fromisoformat(
+            obj["expires"]
+        )
 
         if datetime.utcnow() > expires:
-            path.unlink(missing_ok=True)
+
+            path.unlink(
+                missing_ok=True
+            )
+
             return None
 
         return obj["data"]
 
-    def set(self, namespace, key, value, ttl_hours=24):
+    # ==========================================================
+    # SET
+    # ==========================================================
 
-        path = self._path(namespace, key)
+    def set(
+        self,
+        namespace,
+        key,
+        value,
+        ttl_hours=24
+    ):
 
-        expires = datetime.utcnow() + timedelta(hours=ttl_hours)
+        path = self._path(
+            namespace,
+            key
+        )
 
-        with open(path, "w", encoding="utf8") as f:
+        expires = (
+            datetime.utcnow()
+            + timedelta(hours=ttl_hours)
+        )
+
+        with open(
+            path,
+            "w",
+            encoding="utf8"
+        ) as f:
 
             json.dump(
                 {
@@ -50,9 +113,43 @@ class FileCache:
                     "data": value
                 },
                 f,
-                indent=2
+                indent=2,
+                ensure_ascii=False
             )
 
-    def delete(self, namespace, key):
+    # ==========================================================
+    # DELETE
+    # ==========================================================
 
-        self._path(namespace, key).unlink(missing_ok=True)
+    def delete(
+        self,
+        namespace,
+        key
+    ):
+
+        self._path(
+            namespace,
+            key
+        ).unlink(
+            missing_ok=True
+        )
+
+    # ==========================================================
+    # CLEAR NAMESPACE
+    # ==========================================================
+
+    def clear_namespace(
+        self,
+        namespace
+    ):
+
+        folder = self.base / namespace
+
+        if not folder.exists():
+            return
+
+        for path in folder.glob("*.json"):
+
+            path.unlink(
+                missing_ok=True
+            )
