@@ -1,7 +1,7 @@
 import csv
 import os
 import requests
-from datetime import datetime
+from datetime import datetime, timezone
 
 from api.spamhaus_client import SpamhausClient
 from repositories.spamhaus_repository import SpamhausRepository
@@ -52,6 +52,7 @@ FIELDS = [
     "dkim",
 
     "senders",
+    "sender_ip_history",
 
     "mx",
     "dns_a",
@@ -274,6 +275,181 @@ def format_dict(data):
 
 
 # ==========================================================
+# SENDER IP HISTORY
+# ==========================================================
+
+def format_unix(value):
+
+    if not value:
+        return ""
+
+    try:
+
+        return datetime.fromtimestamp(
+            value,
+            tz=timezone.utc
+        ).strftime(
+            "%Y-%m-%d %H:%M:%S UTC"
+        )
+
+    except (
+        TypeError,
+        ValueError,
+        OSError
+    ):
+
+        return str(value)
+
+
+def get_latest_by_dataset(records):
+
+    latest = {}
+
+    for item in records or []:
+
+        if not isinstance(item, dict):
+            continue
+
+        dataset = item.get(
+            "dataset"
+        )
+
+        if not dataset:
+            continue
+
+        seen = item.get(
+            "seen"
+        )
+
+        if not seen:
+            continue
+
+        if (
+            dataset not in latest
+            or seen > latest[dataset].get(
+                "seen",
+                0
+            )
+        ):
+
+            latest[dataset] = item
+
+    return latest
+
+
+def format_sender_ip_history(
+    client,
+    senders
+):
+
+    if not senders:
+        return ""
+
+    result = []
+
+    for sender in senders:
+
+        if not isinstance(sender, dict):
+            continue
+
+        ip = sender.get(
+            "ip"
+        )
+
+        if not ip:
+            continue
+
+        # IPv6 поки пропускаємо
+        if ":" in ip:
+
+            print()
+            print(
+                "SKIP IPv6:",
+                ip
+            )
+
+            continue
+
+        try:
+
+            print()
+            print(
+                "=" * 60
+            )
+
+            print(
+                "IP:",
+                ip
+            )
+
+            print(
+                "MODE: history"
+            )
+
+            print("=" * 60)
+
+            records = client.get_ip_history(
+                ip
+            )
+
+            if not records:
+
+                print(
+                    "NO IP HISTORY"
+                )
+
+                continue
+
+            latest = get_latest_by_dataset(
+                records
+            )
+
+            print(
+                f"Found {len(latest)} dataset(s)"
+            )
+
+            for dataset in sorted(
+                latest.keys()
+            ):
+
+                item = latest[dataset]
+
+                history = (
+
+                    f"ip={item.get('ipaddress')} "
+                    f"helo={item.get('helo')} "
+                    f"dataset={item.get('dataset')} "
+                    f"listed={format_unix(item.get('listed'))} "
+                    f"valid_until={format_unix(item.get('valid_until'))} "
+                    f"seen={format_unix(item.get('seen'))} "
+                    f"rule={item.get('rule')} "
+                    f"heuristic={item.get('heuristic')} "
+                    f"protocol={item.get('protocol')} "
+                    f"domain={item.get('domain')} "
+                    f"asn={item.get('asn')} "
+                    f"cc={item.get('cc')} "
+                    f"lat={item.get('lat')} "
+                    f"lon={item.get('lon')}"
+
+                )
+
+                result.append(
+                    history
+                )
+
+        except Exception as e:
+
+            print(
+                "IP ERROR:",
+                ip,
+                "->",
+                e
+            )
+
+    return " | ".join(result)
+
+
+# ==========================================================
 # DBL
 # ==========================================================
 
@@ -348,10 +524,6 @@ def get_dbl_data(domain):
             []
         )
 
-        # ==============================================
-        # DBL API CODE
-        # ==============================================
-
         dbl_api_code = ""
 
         if isinstance(
@@ -360,10 +532,6 @@ def get_dbl_data(domain):
         ) and resp:
 
             dbl_api_code = resp[0]
-
-        # ==============================================
-        # DBL RETURN CODE
-        # ==============================================
 
         dbl_return_code = ""
 
@@ -407,6 +575,8 @@ def get_dbl_data(domain):
             "dbl_return_code": ""
 
         }
+
+
 # ==========================================================
 # BUILD REPORT
 # ==========================================================
@@ -566,6 +736,7 @@ def build_report(
         clusters=domain_data.get(
             "clusters",
             {}
+
         )
 
     )
@@ -575,7 +746,10 @@ def build_report(
 # FLATTEN REPORT
 # ==========================================================
 
-def flatten_report(report):
+def flatten_report(
+    client,
+    report
+):
 
     smtp = report.dimensions[
         "smtp"
@@ -594,6 +768,10 @@ def flatten_report(report):
     ][
         "data"
     ]
+
+    senders = smtp.get(
+        "senders"
+    ) or []
 
     return {
 
@@ -685,7 +863,13 @@ def flatten_report(report):
 
         "senders":
             format_senders(
-                smtp.get("senders")
+                senders
+            ),
+
+        "sender_ip_history":
+            format_sender_ip_history(
+                client,
+                senders
             ),
 
         "mx":
@@ -789,12 +973,9 @@ def main():
             )
 
             row = flatten_report(
+                client,
                 report
             )
-
-            # ==================================================
-            # DBL
-            # ==================================================
 
             dbl = get_dbl_data(
                 domain

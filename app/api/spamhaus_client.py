@@ -186,6 +186,21 @@ class SpamhausClient:
         return self.get_domain_senders(domain)
 
     # ==========================================================
+    # SENDER IP HISTORY
+    # ==========================================================
+
+    def get_ip_history(self, ip):
+        data = self.get(
+            f"/api/intel/v1/byobject/cidr/ALL/listings/history/{ip}",
+            f"sender_ip_history/{ip}"
+        )
+
+        if isinstance(data, dict):
+            return data.get("results", [])
+
+        return data or []
+
+    # ==========================================================
     # NAMESERVERS
     # ==========================================================
 
