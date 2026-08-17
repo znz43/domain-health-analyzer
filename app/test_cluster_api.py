@@ -1,14 +1,9 @@
 import os
-import json
-from pathlib import Path
-
 import requests
+
+from pathlib import Path
 from dotenv import load_dotenv
 
-
-# =====================================================
-# Configuration
-# =====================================================
 
 BASE_DIR = Path(__file__).resolve().parents[1]
 
@@ -16,341 +11,135 @@ load_dotenv(
     BASE_DIR / ".env"
 )
 
-
 BASE_URL = "https://api.spamhaus.org"
 
-USERNAME = os.getenv(
-    "SPAMHAUS_USERNAME"
-)
+USERNAME = os.getenv("SPAMHAUS_USERNAME")
+PASSWORD = os.getenv("SPAMHAUS_PASSWORD")
 
-PASSWORD = os.getenv(
-    "SPAMHAUS_PASSWORD"
-)
+DOMAIN = "instapaychecks.com"
 
-
-# =====================================================
-# Helpers
-# =====================================================
-
-def save_json(filename, data):
-
-    output_dir = BASE_DIR / "data"
-
-    output_dir.mkdir(
-        exist_ok=True
-    )
-
-    file_path = output_dir / filename
-
-
-    with open(
-        file_path,
-        "w",
-        encoding="utf-8"
-    ) as f:
-
-        json.dump(
-            data,
-            f,
-            indent=2,
-            ensure_ascii=False
-        )
-
-
-    print(
-        f"\nSaved: {file_path}"
-    )
-
-
-
-def get_headers(token):
-
-    return {
-        "Authorization": f"Bearer {token}"
-    }
-
-
-
-def print_json(title, data):
-
-    print(
-        f"\n{title}:"
-    )
-
-    print(
-        json.dumps(
-            data,
-            indent=2,
-            ensure_ascii=False
-        )
-    )
-
-
-# =====================================================
-# Authentication
-# =====================================================
 
 def login():
 
-    print(
-        "USERNAME:",
-        USERNAME
-    )
-
-    print(
-        "PASSWORD LENGTH:",
-        len(PASSWORD) if PASSWORD else None
-    )
-
-
     response = requests.post(
-
         f"{BASE_URL}/api/v1/login",
-
         json={
             "username": USERNAME,
             "password": PASSWORD,
             "realm": "intel"
         },
-
         timeout=30
     )
 
-
-    print(
-        "\nLOGIN STATUS:",
-        response.status_code
-    )
-
-
-    print(
-        "LOGIN BODY:"
-    )
-
-    print(
-        response.text
-    )
-
-
     response.raise_for_status()
 
-
-    data = response.json()
-
-
-    return data.get(
-        "token"
-    )
+    return response.json()["token"]
 
 
-# =====================================================
-# Spamhaus API
-# =====================================================
-
-def get_domain(domain, token):
+def get_domain(
+    domain,
+    token
+):
 
     response = requests.get(
-
         f"{BASE_URL}/api/intel/v2/byobject/domain/{domain}",
-
-        headers=get_headers(token),
-
+        headers={
+            "Authorization": f"Bearer {token}"
+        },
         timeout=30
     )
 
-
-    print(
-        "\nDOMAIN STATUS:",
-        response.status_code
-    )
-
-
     response.raise_for_status()
 
-
     return response.json()
-
 
 
 def get_cluster(
-        cluster_type,
-        cluster_hash,
-        token
+    cluster_type,
+    cluster_hash,
+    token
 ):
 
-    url = (
-
-        f"{BASE_URL}/api/intel/v2/byobject/hash/"
-        f"{cluster_type}/{cluster_hash}"
-
-    )
-
-
-    print(
-        "\n" + "=" * 80
-    )
-
-    print(
-        "CLUSTER REQUEST:"
-    )
-
-    print(
-        url
-    )
-
-
     response = requests.get(
-
-        url,
-
-        headers=get_headers(token),
-
+        f"{BASE_URL}/api/intel/v2/byobject/hash/"
+        f"{cluster_type}/{cluster_hash}",
+        headers={
+            "Authorization": f"Bearer {token}"
+        },
         timeout=30
     )
 
-
     print(
-        "STATUS:",
+        f"{cluster_type.upper()}:",
         response.status_code
     )
 
-
-    print(
-        "BODY:"
-    )
-
-    print(
-        response.text
-    )
-
-
+    if response.status_code == 200:
+        return response.json()
 
     if response.status_code == 403:
-
-        print(
-            "Extended Access required"
-        )
-
+        print("Extended Access required")
         return None
-
-
 
     if response.status_code == 404:
-
-        print(
-            "Cluster not found"
-        )
-
+        print("Cluster not found")
         return None
-
-
 
     response.raise_for_status()
 
 
-    return response.json()
-
-
-
-# =====================================================
-# Main
-# =====================================================
-
 def main():
-
-    domain = "charamarinara.com"
-
 
     token = login()
 
-
-    if not token:
-
-        raise Exception(
-            "Token not received"
-        )
-
-
-    # ---------------------------------------------
-    # Domain
-    # ---------------------------------------------
-
     domain_data = get_domain(
-        domain,
+        DOMAIN,
         token
     )
-
-
-    save_json(
-        f"{domain}_domain.json",
-        domain_data
-    )
-
-
-    print_json(
-        "DOMAIN DATA",
-        domain_data
-    )
-
 
     clusters = domain_data.get(
         "clusters",
         {}
     )
 
-
-    print_json(
-        "CLUSTERS",
-        clusters
+    print(
+        "\nDOMAIN:",
+        DOMAIN
     )
 
+    print(
+        "AUTH HASH:",
+        clusters.get("auth")
+    )
 
-    # ---------------------------------------------
-    # Clusters
-    # ---------------------------------------------
+    print(
+        "INFRA HASH:",
+        clusters.get("infra")
+    )
 
-    for cluster_type, cluster_hash in clusters.items():
+    for cluster_type in (
+        "auth",
+        "infra"
+    ):
 
-
-        print(
-            f"\nCHECK {cluster_type.upper()} CLUSTER"
+        cluster_hash = clusters.get(
+            cluster_type
         )
 
+        if not cluster_hash:
+            continue
 
-        cluster_data = get_cluster(
-
+        data = get_cluster(
             cluster_type,
-
             cluster_hash,
-
             token
         )
 
-
-        if cluster_data:
-
-
-            save_json(
-
-                f"{domain}_{cluster_type}_{cluster_hash}.json",
-
-                cluster_data
+        if data:
+            print(
+                data
             )
 
-
-            print_json(
-
-                "CLUSTER DATA",
-
-                cluster_data
-            )
-
-
-
-# =====================================================
-# Entry point
-# =====================================================
 
 if __name__ == "__main__":
-
     main()

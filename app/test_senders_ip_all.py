@@ -111,41 +111,6 @@ def get_ip_history(
     )
 
 
-def get_latest_by_dataset(
-    records
-):
-
-    latest = {}
-
-    for item in records:
-
-        dataset = item.get(
-            "dataset"
-        )
-
-        if not dataset:
-            continue
-
-        seen = item.get(
-            "seen"
-        )
-
-        if not seen:
-            continue
-
-        if (
-            dataset not in latest
-            or seen > latest[dataset].get(
-                "seen",
-                0
-            )
-        ):
-
-            latest[dataset] = item
-
-    return latest
-
-
 def print_listing(
     item
 ):
@@ -294,7 +259,7 @@ def main():
         )
 
     # ==========================================================
-    # IP HISTORY
+    # FULL IP HISTORY
     # ==========================================================
 
     for sender in senders:
@@ -334,29 +299,35 @@ def main():
                 continue
 
             # ==================================================
-            # LATEST RECORD PER DATASET
+            # ALL HISTORY RECORDS
             # ==================================================
 
-            latest = get_latest_by_dataset(
-                records
+            records = sorted(
+                records,
+                key=lambda item: item.get(
+                    "seen",
+                    0
+                ) or 0,
+                reverse=True
             )
 
             print()
             print(
-                "LATEST RECORDS BY DATASET:"
+                "FULL IP HISTORY:"
             )
 
             print(
-                f"Found {len(latest)} dataset(s)"
+                f"Found {len(records)} record(s)"
             )
 
-            # Сортуємо для стабільного виводу
-            for dataset in sorted(
-                latest.keys()
-            ):
+            # ==================================================
+            # PRINT EVERY RECORD
+            # ==================================================
+
+            for item in records:
 
                 print_listing(
-                    latest[dataset]
+                    item
                 )
 
         except Exception as e:

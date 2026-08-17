@@ -8,17 +8,46 @@ class CacheManager:
         self.memory = MemoryCache()
         self.file = FileCache()
 
-    def _memory_key(self, namespace, key):
+    # ==========================================================
+    # INTERNAL
+    # ==========================================================
+
+    def _memory_key(
+        self,
+        namespace,
+        key
+    ):
         return f"{namespace}:{key}"
 
-    def get(self, namespace, key):
+    # ==========================================================
+    # GET
+    # ==========================================================
 
-        mem_key = self._memory_key(namespace, key)
+    def get(
+        self,
+        namespace,
+        key
+    ):
 
-        value = self.memory.get(mem_key)
+        mem_key = self._memory_key(
+            namespace,
+            key
+        )
+
+        # ------------------------------------------------------
+        # MEMORY CACHE
+        # ------------------------------------------------------
+
+        value = self.memory.get(
+            mem_key
+        )
 
         if value is not None:
             return value
+
+        # ------------------------------------------------------
+        # FILE CACHE
+        # ------------------------------------------------------
 
         value = self.file.get(
             namespace,
@@ -26,13 +55,19 @@ class CacheManager:
         )
 
         if value is not None:
+
             self.memory.set(
                 mem_key,
                 value
             )
 
-        return value
+            return value
 
+        return None
+
+    # ==========================================================
+    # SET
+    # ==========================================================
 
     def set(
         self,
@@ -47,10 +82,18 @@ class CacheManager:
             key
         )
 
+        # ------------------------------------------------------
+        # MEMORY CACHE
+        # ------------------------------------------------------
+
         self.memory.set(
             mem_key,
             value
         )
+
+        # ------------------------------------------------------
+        # FILE CACHE
+        # ------------------------------------------------------
 
         self.file.set(
             namespace,
@@ -59,6 +102,9 @@ class CacheManager:
             ttl_hours
         )
 
+    # ==========================================================
+    # DELETE
+    # ==========================================================
 
     def delete(
         self,
@@ -71,13 +117,30 @@ class CacheManager:
             key
         )
 
-        self.memory.delete(mem_key)
+        print(
+            f"CACHE DELETE: {namespace}/{key}"
+        )
+
+        # ------------------------------------------------------
+        # MEMORY CACHE
+        # ------------------------------------------------------
+
+        self.memory.delete(
+            mem_key
+        )
+
+        # ------------------------------------------------------
+        # FILE CACHE
+        # ------------------------------------------------------
 
         self.file.delete(
             namespace,
             key
         )
 
+    # ==========================================================
+    # REMEMBER
+    # ==========================================================
 
     def remember(
         self,
@@ -93,18 +156,18 @@ class CacheManager:
         )
 
         if value is not None:
+
             print(
                 f"CACHE HIT: {namespace}/{key}"
             )
-            return value
 
+            return value
 
         print(
             f"CACHE MISS: {namespace}/{key}"
         )
 
         value = loader()
-
 
         self.set(
             namespace,
@@ -114,3 +177,41 @@ class CacheManager:
         )
 
         return value
+
+    # ==========================================================
+    # CLEAR NAMESPACE
+    # ==========================================================
+
+    def clear_namespace(
+        self,
+        namespace
+    ):
+
+        """
+        Clear all cached values from a namespace.
+
+        This method is intentionally optional and does not
+        affect existing cache behaviour.
+        """
+
+        print(
+            f"CACHE CLEAR NAMESPACE: {namespace}"
+        )
+
+        if hasattr(
+            self.file,
+            "clear_namespace"
+        ):
+
+            self.file.clear_namespace(
+                namespace
+            )
+
+        if hasattr(
+            self.memory,
+            "clear_namespace"
+        ):
+
+            self.memory.clear_namespace(
+                namespace
+            )
