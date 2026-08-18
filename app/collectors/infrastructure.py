@@ -20,14 +20,12 @@ def collect_infrastructure(
         "ns"
     )
 
-
     a_records = [
         {
             "ip": ip
         }
         for ip in get_a(domain)
     ]
-
 
     aaaa_records = [
         {
@@ -36,10 +34,8 @@ def collect_infrastructure(
         for ip in get_aaaa(domain)
     ]
 
-
     mx_records = []
     mx_hosts = []
-
 
     for mx in get_mx(domain):
 
@@ -50,19 +46,16 @@ def collect_infrastructure(
 
         host = parts[1].rstrip(".")
 
-
         mx_hosts.append(host)
 
         mx_records.append({
             "host": host
         })
 
-
     dqs_targets = {
         record["ip"]
         for record in a_records
     }
-
 
     for host in mx_hosts:
 
@@ -70,19 +63,17 @@ def collect_infrastructure(
             resolve_host(host)
         )
 
-
     spamhaus_dqs = []
-
 
     for ip in dqs_targets:
 
         result = check_dqs(ip)
 
         if result:
+
             spamhaus_dqs.append(
                 result
             )
-
 
     return {
 

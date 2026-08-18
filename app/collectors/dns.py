@@ -9,7 +9,11 @@ DEFAULT_DKIM_SELECTORS = [
     "dkim",
     "mail",
     "s1",
-    "s2"
+    "s2",
+    "smtp",
+    "email",
+    "k1",
+    "k2",
 ]
 
 
@@ -26,20 +30,30 @@ def resolve_record(
             lifetime=5
         )
 
-
         return [
             str(record)
             .replace('"', "")
             .strip()
-
             for record in answers
         ]
 
+    except (
+        dns.resolver.NXDOMAIN,
+        dns.resolver.NoAnswer,
+        dns.resolver.NoNameservers,
+        dns.exception.Timeout
+    ):
+
+        return []
 
     except Exception:
 
         return []
 
+
+# ==========================================================
+# A
+# ==========================================================
 
 def get_a(domain):
 
@@ -49,6 +63,10 @@ def get_a(domain):
     )
 
 
+# ==========================================================
+# AAAA
+# ==========================================================
+
 def get_aaaa(domain):
 
     return resolve_record(
@@ -56,6 +74,10 @@ def get_aaaa(domain):
         "AAAA"
     )
 
+
+# ==========================================================
+# MX
+# ==========================================================
 
 def get_mx(domain):
 
@@ -65,6 +87,10 @@ def get_mx(domain):
     )
 
 
+# ==========================================================
+# TXT
+# ==========================================================
+
 def get_txt(domain):
 
     return resolve_record(
@@ -73,20 +99,24 @@ def get_txt(domain):
     )
 
 
+# ==========================================================
+# SPF
+# ==========================================================
+
 def get_spf(domain):
 
+    records = get_txt(domain)
+
     return [
-
         record
-
-        for record in get_txt(domain)
-
-        if record.lower().startswith(
-            "v=spf1"
-        )
-
+        for record in records
+        if record.lower().startswith("v=spf1")
     ]
 
+
+# ==========================================================
+# DMARC
+# ==========================================================
 
 def get_dmarc(domain):
 
@@ -96,59 +126,68 @@ def get_dmarc(domain):
     )
 
 
+# ==========================================================
+# DKIM
+# ==========================================================
+
 def get_dkim(
     domain,
     selectors=None
 ):
 
     if selectors is None:
-        selectors = DEFAULT_DKIM_SELECTORS
 
+        selectors = DEFAULT_DKIM_SELECTORS
 
     results = []
 
     seen = set()
 
-
     for selector in selectors:
 
+        selector = selector.strip().lower()
+
+        if not selector:
+            continue
 
         host = (
             f"{selector}._domainkey.{domain}"
         )
-
 
         records = resolve_record(
             host,
             "TXT"
         )
 
-
         if not records:
             continue
 
+        value = "".join(
+            record.strip()
+            for record in records
+        )
 
-        value = "".join(records)
+        value_lower = value.lower()
 
+        if not (
+            value_lower.startswith("v=dkim1")
+            or "v=dkim1;" in value_lower
+            or "v=dkim1 " in value_lower
+        ):
 
-        if "v=DKIM1" not in value:
             continue
-
 
         fingerprint = (
             selector,
             value
         )
 
-
         if fingerprint in seen:
             continue
-
 
         seen.add(
             fingerprint
         )
-
 
         results.append({
 
@@ -158,14 +197,16 @@ def get_dkim(
 
         })
 
-
     return results
 
+
+# ==========================================================
+# HOST RESOLUTION
+# ==========================================================
 
 def resolve_host(host):
 
     result = []
-
 
     for record_type in (
         "A",
@@ -173,13 +214,10 @@ def resolve_host(host):
     ):
 
         result.extend(
-
             resolve_record(
                 host,
                 record_type
             )
-
         )
-
 
     return result

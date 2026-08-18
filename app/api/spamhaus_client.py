@@ -45,17 +45,9 @@ class SpamhausClient:
 
         if cached:
 
-            print(
-                "AUTH CACHE HIT"
-            )
-
             self.token = cached
 
             return self.token
-
-        print(
-            "AUTH CACHE MISS"
-        )
 
         response = requests.post(
             f"{self.BASE_URL}/api/v1/login",
@@ -68,11 +60,6 @@ class SpamhausClient:
                 "Content-Type": "application/json"
             },
             timeout=30
-        )
-
-        print(
-            "LOGIN STATUS:",
-            response.status_code
         )
 
         response.raise_for_status()
@@ -104,10 +91,6 @@ class SpamhausClient:
         namespace = None
         key = None
 
-        # ------------------------------------------------------
-        # CACHE
-        # ------------------------------------------------------
-
         if cache_key:
 
             namespace, key = cache_key.split(
@@ -121,28 +104,10 @@ class SpamhausClient:
             )
 
             if cached is not None:
-
-                print(
-                    f"CACHE HIT: {cache_key} "
-                    f"| type={type(cached).__name__}"
-                )
-
                 return cached
-
-            print(
-                f"CACHE MISS: {cache_key}"
-            )
-
-        # ------------------------------------------------------
-        # AUTH
-        # ------------------------------------------------------
 
         if not self.token:
             self.login()
-
-        # ------------------------------------------------------
-        # REQUEST
-        # ------------------------------------------------------
 
         response = requests.get(
             self.BASE_URL + endpoint,
@@ -152,15 +117,7 @@ class SpamhausClient:
             timeout=30
         )
 
-        # ------------------------------------------------------
-        # TOKEN EXPIRED
-        # ------------------------------------------------------
-
         if response.status_code == 401:
-
-            print(
-                "AUTH EXPIRED: refreshing token"
-            )
 
             self.token = None
 
@@ -174,37 +131,13 @@ class SpamhausClient:
                 timeout=30
             )
 
-        # ------------------------------------------------------
-        # NOT FOUND
-        # ------------------------------------------------------
-
         if response.status_code == 404:
-
-            print(
-                f"NOT FOUND: {endpoint}"
-            )
-
-            # Important:
-            # Do NOT convert 404 into [].
-            # Do NOT cache the result.
 
             return None
 
-        # ------------------------------------------------------
-        # OTHER HTTP ERRORS
-        # ------------------------------------------------------
-
         response.raise_for_status()
 
-        # ------------------------------------------------------
-        # JSON
-        # ------------------------------------------------------
-
         data = response.json()
-
-        # ------------------------------------------------------
-        # CACHE
-        # ------------------------------------------------------
 
         if cache_key and data is not None:
 

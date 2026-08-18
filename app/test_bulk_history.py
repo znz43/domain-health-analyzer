@@ -1,6 +1,7 @@
 import csv
 import os
 import requests
+
 from datetime import datetime, timezone
 
 from api.spamhaus_client import SpamhausClient
@@ -25,6 +26,10 @@ OUTPUT_FILE = "data/export/spamhaus_history.csv"
 
 DBL_BASE_URL = "https://apibl.spamhaus.net"
 
+
+# ==========================================================
+# CSV STRUCTURE
+# ==========================================================
 
 FIELDS = [
 
@@ -58,17 +63,21 @@ FIELDS = [
     "dns_a",
     "dns_aaaa",
     "nameservers",
+
     "spamhaus_dqs",
 
     "dbl_api_code",
     "dbl_return_code",
 
     "malware",
-
     "clusters"
 
 ]
 
+
+# ==========================================================
+# INPUT
+# ==========================================================
 
 def load_domains():
 
@@ -79,11 +88,15 @@ def load_domains():
     ) as file:
 
         return [
-            x.strip()
-            for x in file
-            if x.strip()
+            line.strip()
+            for line in file
+            if line.strip()
         ]
 
+
+# ==========================================================
+# FORMAT HELPERS
+# ==========================================================
 
 def join_values(values):
 
@@ -91,8 +104,8 @@ def join_values(values):
         return ""
 
     return " | ".join(
-        str(x)
-        for x in values
+        str(value)
+        for value in values
     )
 
 
@@ -103,14 +116,19 @@ def format_contexts(contexts):
 
     return " | ".join(
 
-        f"{x.get('context')}:{x.get('last_seen')}"
+        f"{item.get('context')}:{item.get('last_seen')}"
 
-        for x in contexts
+        for item in contexts
+
+        if isinstance(item, dict)
 
     )
 
 
-def format_objects(data, key):
+def format_objects(
+    data,
+    key
+):
 
     result = []
 
@@ -199,16 +217,17 @@ def format_nameservers(data):
 
     for item in data or []:
 
-        if isinstance(item, dict):
+        if not isinstance(item, dict):
+            continue
 
-            result.append(
+        result.append(
 
-                f"{item.get('ns')} "
-                f"score={item.get('score')} "
-                f"counter={item.get('counter')} "
-                f"last_seen={item.get('last_seen')}"
+            f"{item.get('ns')} "
+            f"score={item.get('score')} "
+            f"counter={item.get('counter')} "
+            f"last_seen={item.get('last_seen')}"
 
-            )
+        )
 
     return " | ".join(result)
 
@@ -219,32 +238,45 @@ def format_dqs(data):
 
     for item in data or []:
 
-        checks = []
+        if not isinstance(item, dict):
+            continue
 
-        for name, value in item.get(
+        ip = item.get(
+            "ip"
+        )
+
+        lists = item.get(
             "lists",
             {}
-        ).items():
+        )
+
+        checks = []
+
+        for name, value in lists.items():
+
+            if value is True:
+
+                status = "LISTED"
+
+            elif value is False:
+
+                status = "CLEAN"
+
+            else:
+
+                status = "UNKNOWN"
 
             checks.append(
-
-                f"{name}="
-                +
-                (
-                    "LISTED"
-                    if value
-                    else "CLEAN"
-                )
-
+                f"{name}={status}"
             )
 
-        result.append(
+        if ip:
 
-            f"{item.get('ip')}:"
-            +
-            ",".join(checks)
-
-        )
+            result.append(
+                f"{ip}:"
+                +
+                ",".join(checks)
+            )
 
     return " | ".join(result)
 
@@ -257,17 +289,17 @@ def format_dict(data):
     if isinstance(data, list):
 
         return " | ".join(
-            str(x)
-            for x in data
+            str(value)
+            for value in data
         )
 
     if isinstance(data, dict):
 
         return " | ".join(
 
-            f"{k}={v}"
+            f"{key}={value}"
 
-            for k, v in data.items()
+            for key, value in data.items()
 
         )
 
@@ -359,17 +391,6 @@ def format_sender_ip_history(
         if not ip:
             continue
 
-        # IPv6 поки пропускаємо
-        if ":" in ip:
-
-            print()
-            print(
-                "SKIP IPv6:",
-                ip
-            )
-
-            continue
-
         try:
 
             print()
@@ -386,7 +407,9 @@ def format_sender_ip_history(
                 "MODE: history"
             )
 
-            print("=" * 60)
+            print(
+                "=" * 60
+            )
 
             records = client.get_ip_history(
                 ip
@@ -437,13 +460,13 @@ def format_sender_ip_history(
                     history
                 )
 
-        except Exception as e:
+        except Exception as error:
 
             print(
                 "IP ERROR:",
                 ip,
                 "->",
-                e
+                error
             )
 
     return " | ".join(result)
@@ -526,10 +549,7 @@ def get_dbl_data(domain):
 
         dbl_api_code = ""
 
-        if isinstance(
-            resp,
-            list
-        ) and resp:
+        if isinstance(resp, list) and resp:
 
             dbl_api_code = resp[0]
 
@@ -561,11 +581,11 @@ def get_dbl_data(domain):
 
         }
 
-    except Exception as e:
+    except Exception as error:
 
         print(
             "DBL ERROR:",
-            e
+            error
         )
 
         return {
@@ -617,9 +637,7 @@ def build_report(
     smtp = collect_smtp(
 
         repo,
-
         domain,
-
         contexts
 
     )
@@ -627,7 +645,6 @@ def build_report(
     identity = collect_identity(
 
         domain,
-
         contexts
 
     )
@@ -635,11 +652,8 @@ def build_report(
     timeline = collect_timeline(
 
         repo,
-
         domain,
-
         contexts,
-
         domain_data
 
     )
@@ -647,7 +661,6 @@ def build_report(
     infrastructure = collect_infrastructure(
 
         repo,
-
         domain
 
     )
@@ -655,11 +668,8 @@ def build_report(
     malware = normalize_malware(
 
         collect_malware(
-
             repo,
-
             domain
-
         )
 
     )
@@ -848,17 +858,23 @@ def flatten_report(
 
         "spf":
             join_values(
-                identity.get("spf")
+                identity.get(
+                    "spf"
+                )
             ),
 
         "dmarc":
             join_values(
-                identity.get("dmarc")
+                identity.get(
+                    "dmarc"
+                )
             ),
 
         "dkim":
             format_dkim(
-                identity.get("dkim")
+                identity.get(
+                    "dkim"
+                )
             ),
 
         "senders":
@@ -910,6 +926,12 @@ def flatten_report(
                 )
             ),
 
+        "dbl_api_code":
+            "",
+
+        "dbl_return_code":
+            "",
+
         "malware":
             format_dict(
                 report.dimensions[
@@ -950,7 +972,22 @@ def main():
 
     rows = []
 
-    for domain in load_domains():
+    domains = load_domains()
+
+    print()
+    print(
+        "=" * 60
+    )
+
+    print(
+        f"DOMAINS TO SCAN: {len(domains)}"
+    )
+
+    print(
+        "=" * 60
+    )
+
+    for domain in domains:
 
         try:
 
@@ -1000,14 +1037,16 @@ def main():
                 domain
             )
 
-        except Exception as e:
+        except Exception as error:
 
             print(
                 "FAILED:",
                 domain,
                 "->",
-                e
+                error
             )
+
+            continue
 
     file_exists = os.path.exists(
         OUTPUT_FILE
@@ -1034,6 +1073,9 @@ def main():
         )
 
     print()
+    print(
+        "=" * 60
+    )
 
     print(
         "HISTORY APPEND:",
@@ -1045,7 +1087,20 @@ def main():
         len(rows)
     )
 
+    print(
+        "DOMAINS TOTAL:",
+        len(domains)
+    )
+
+    print(
+        "DOMAINS FAILED:",
+        len(domains) - len(rows)
+    )
+
+    print(
+        "=" * 60
+    )
+
 
 if __name__ == "__main__":
-
     main()
